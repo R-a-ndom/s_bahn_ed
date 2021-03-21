@@ -1,0 +1,10 @@
+# S_BAHN_ED GIT ignoring file
+
+Makefile
+
+/bin
+
+/src/*~
+/src/*.o
+/src/a.out
+/src/editor
