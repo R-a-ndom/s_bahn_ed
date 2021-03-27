@@ -15,6 +15,7 @@ const frame_char_set show_frame = { '+', '-', '|' };
 const frame_char_set hide_frame = { ' ', ' ', ' ' };
 const frame_char_set star_frame = { '*', '*', '*' };
 
+/* --- === --- === --- */
 
 scr_point get_wmiddle(WINDOW *win_ptr)
 {
@@ -64,7 +65,7 @@ void wdraw_frame (WINDOW *win_ptr,
      start_pt.col + h_size,
      set.corner);
 
-  for(i=start_pt.col + 1; i < start_pt.col + h_size; i++)
+  for(i = start_pt.col + 1; i < start_pt.col + h_size; i++)
   {
     mvwaddch(win_ptr,                  // Top Horizontal line
              start_pt.row, i,
@@ -74,7 +75,7 @@ void wdraw_frame (WINDOW *win_ptr,
              set.h_line);
   }
 
-  for(i=start_pt.row + 1; i < start_pt.row + v_size; i++)
+  for(i = start_pt.row + 1; i < start_pt.row + v_size; i++)
   {
     mvwaddch(win_ptr,                 // Left Vertical line
              i, start_pt.col,
@@ -94,7 +95,7 @@ void wadd_string_arr(WINDOW *win_ptr,scr_point start_p, const char **arr)
   int i = 0;
   while(arr[i] != NULL)
   {
-    mvwprintw(win_ptr,start_p.row+i,start_p.col,"%s",arr[i]);
+    mvwprintw(win_ptr, start_p.row+i, start_p.col, "%s", arr[i]);
     i++;
   }
 }
@@ -109,6 +110,6 @@ void wclear_rect(WINDOW *win_ptr,
   for(i = start_point.row; i < (start_point.row + v_size);i++)
   {
     for(j = start_point.col; j < (start_point.col + h_size); j++)
-      mvwaddch(win_ptr,i,j,' ');
+      mvwaddch(win_ptr, i, j, ' ');
   }
 }

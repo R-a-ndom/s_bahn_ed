@@ -13,7 +13,7 @@ typedef struct editor_obj_coords {
 } editor_obj_coords;
 
 
-void draw_stdscr_statics();
+void draw_stdscr_statics(editor_obj_coords* coords);
 
 void editor_init();
 

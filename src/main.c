@@ -18,4 +18,5 @@ int main(int argc, char *argv[])
 {
   editor_init();
   editor_run();
+  return 0;
 }

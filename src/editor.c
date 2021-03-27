@@ -3,19 +3,20 @@
 */
 
 #include <ncurses.h>
+#include <stdio.h>
+#include <stdlib.h>
 
 #include "editor_base.h"
 #include "ncurs_ext.h"
 #include "main_win.h"
 #include "editor.h"
 
-void draw_stdscr_statics()
+
+void draw_stdscr_statics(editor_obj_coords* coords)
 {
-  scr_point scr_size;
   int current_col = 0;
-  getmaxyx(stdscr, scr_size.row, scr_size.col);
   addstr("S_BAHN level editor!");
-  while (current_col < scr_size.col)
+  while (current_col < coords->screen_size.col)
   {
     move(1, current_col);
     addch('-');
@@ -23,37 +24,68 @@ void draw_stdscr_statics()
   }
 }
 
-editor_obj_coords calculate_obj_coords()
+void calculate_obj_coords(editor_obj_coords* coords)
 {
-  editor_obj_coords tmp_coords;
+  scr_point tmp_scr_size;
 
-  tmp_coords.screen_size = get_middle();
-  tmp_coords.coords_main_win.row =
-      tmp_coords.screen_size.row - ( main_win_height / 2 );
-  tmp_coords.coords_main_win.col =
-      tmp_coords.screen_size.col - ( main_win_width  / 2 );
-  return tmp_coords;
+  getmaxyx(stdscr, coords->screen_size.row, coords->screen_size.col);
+  tmp_scr_size = get_middle();
+  coords->coords_main_win.row =
+      tmp_scr_size.row - ( main_win_height / 2 );
+  coords->coords_main_win.col =
+      tmp_scr_size.col - ( main_win_width  / 2 );
 }
+
+void editor_redraw(WINDOW* main_win, editor_obj_coords* coords)
+{
+  erase();
+  calculate_obj_coords(coords);
+  draw_stdscr_statics(coords);
+  mvwin(main_win, coords->coords_main_win.row, coords->coords_main_win.col);
+  wrefresh(stdscr);
+  wrefresh(main_win);
+}
+
 
 void editor_init()
 {
   initscr();
+  crmode();
+  noecho();
 }
 
 void editor_run()
 {
   WINDOW* main_win;
   editor_obj_coords main_coords;
+  chtype sym;
 
-  main_coords = calculate_obj_coords();
+  calculate_obj_coords(&main_coords);
   main_win = newwin(main_win_height,
                     main_win_width,
                     main_coords.coords_main_win.row,
                     main_coords.coords_main_win.col );
-  draw_stdscr_statics();
+  draw_stdscr_statics(&main_coords);
   draw_main_win_statics(main_win);
   wrefresh(stdscr);
   wrefresh(main_win);
-  napms(3000);
-  endwin();
+  keypad(main_win, TRUE);
+  for(;;)
+  {
+    sym = wgetch(main_win);
+    switch (sym)
+    {
+      case KEY_RESIZE:
+      {
+        editor_redraw(main_win, &main_coords);
+        break;
+      }
+      case KEY_F(10):
+      {
+        endwin();
+        printf("Thanks for using S_BAHN_ED editor !\n");
+        exit(EXIT_SUCCESS);
+      }
+    } /* switch (sym) */
+  }
 }
