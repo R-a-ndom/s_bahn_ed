@@ -11,15 +11,19 @@ enum {
 /* color pairs */
 
 enum {
-  main_win_width = 55,
-  main_win_height = 18,
+  pair_standard = 20,
+  pair_selected,
+  pair_menu_unactive,
+  pair_menu_item_non_sel,
+  pair_menu_item_sel,
 };
 
+
+/* main window size */
+
 enum {
-  pair_main_win_frame,
-  pair_menu_unactive,
-  pair_menu_unselected_item,
-  pair_menu_selected_item,
+  main_win_width = 55,
+  main_win_height = 18,
 };
 
 /* program state */

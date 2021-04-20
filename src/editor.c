@@ -11,6 +11,14 @@
 #include "main_win.h"
 #include "editor.h"
 
+void init_all_colors()
+{
+  init_pair(pair_standard, COLOR_WHITE, COLOR_BLACK);
+  init_pair(pair_selected, COLOR_YELLOW, COLOR_BLACK);
+  init_pair(pair_menu_unactive, COLOR_WHITE, COLOR_BLACK);
+  init_pair(pair_menu_item_non_sel, COLOR_WHITE, COLOR_MAGENTA);
+  init_pair(pair_menu_item_sel, COLOR_WHITE, COLOR_YELLOW);
+}
 
 void draw_stdscr_statics(editor_obj_coords* coords)
 {
@@ -46,10 +54,20 @@ void editor_redraw(WINDOW* main_win, editor_obj_coords* coords)
   wrefresh(main_win);
 }
 
-
 void editor_init()
 {
   initscr();
+  if ( !has_colors() )
+  {
+    printf("Terminat not supports COLORS !\n");
+    exit(1);
+  }
+  if ( start_color() != OK )
+  {
+    printf("Unable to start COLORS !\n");
+    exit(2);
+  }
+  init_all_colors();
   crmode();
   noecho();
 }
