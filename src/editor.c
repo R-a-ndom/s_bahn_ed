@@ -14,10 +14,21 @@
 void init_all_colors()
 {
   init_pair(pair_standard, COLOR_WHITE, COLOR_BLACK);
-  init_pair(pair_selected, COLOR_YELLOW, COLOR_BLACK);
+  init_pair(pair_main_win_standard, COLOR_BLACK, COLOR_WHITE);
+
   init_pair(pair_menu_unactive, COLOR_WHITE, COLOR_BLACK);
   init_pair(pair_menu_item_non_sel, COLOR_WHITE, COLOR_MAGENTA);
   init_pair(pair_menu_item_sel, COLOR_WHITE, COLOR_YELLOW);
+
+  init_pair(pair_empty, COLOR_WHITE,  COLOR_BLACK);
+  init_pair(pair_wall, COLOR_WHITE, COLOR_YELLOW);
+  init_pair(pair_box, COLOR_WHITE, COLOR_MAGENTA);
+  init_pair(pair_player, COLOR_WHITE, COLOR_GREEN);
+
+  init_pair(pair_empty_sel, COLOR_RED, COLOR_BLACK);
+  init_pair(pair_wall_sel, COLOR_RED, COLOR_YELLOW);
+  init_pair(pair_box_sel, COLOR_RED, COLOR_MAGENTA);
+  init_pair(pair_player_sel, COLOR_RED, COLOR_GREEN);
 }
 
 void draw_stdscr_statics(editor_obj_coords* coords)
@@ -59,12 +70,12 @@ void editor_init()
   initscr();
   if ( !has_colors() )
   {
-    printf("Terminat not supports COLORS !\n");
+    fprintf(stderr, "Terminat not supports COLORS !\n");
     exit(1);
   }
   if ( start_color() != OK )
   {
-    printf("Unable to start COLORS !\n");
+    fprintf(stderr, "Unable to start COLORS !\n");
     exit(2);
   }
   init_all_colors();

@@ -12,10 +12,21 @@ enum {
 
 enum {
   pair_standard = 20,
-  pair_selected,
+  pair_main_win_standard,
+
   pair_menu_unactive,
   pair_menu_item_non_sel,
   pair_menu_item_sel,
+
+  pair_empty,
+  pair_wall,
+  pair_box,
+  pair_player,
+
+  pair_empty_sel,
+  pair_wall_sel,
+  pair_box_sel,
+  pair_player_sel
 };
 
 
