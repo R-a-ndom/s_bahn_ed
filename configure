@@ -25,7 +25,7 @@ debug_compiler_flags='-g -Wall -DDEBUG'
 release_compiler_flags='-Wall -O3'
 library_list='-lncurses'
 
-source_files_list=( "ncurs_ext" "editor" "main_win" )
+source_files_list=( "ncurs_ext" "dialogs" "editor" "main_win" )
 
 # FUNCTIONS
 

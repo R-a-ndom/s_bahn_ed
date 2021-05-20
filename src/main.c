@@ -11,6 +11,7 @@
 
 #include "editor_base.h"
 #include "ncurs_ext.h"
+#include "dialogs.h"
 #include "main_win.h"
 #include "editor.h"
 

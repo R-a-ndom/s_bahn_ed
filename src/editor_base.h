@@ -23,18 +23,20 @@ enum {
   pair_box,
   pair_player,
 
-  pair_empty_sel,
-  pair_wall_sel,
-  pair_box_sel,
-  pair_player_sel
+  pair_empty_cursor,
+  pair_wall_cursor,
+  pair_box_cursor,
+  pair_player_cursor,
 };
-
 
 /* main window size */
 
 enum {
-  main_win_width = 55,
-  main_win_height = 18,
+  terminal_standard_width  = 80,
+  terminal_standard_height = 24,
+
+  main_win_width           = 55,
+  main_win_height          = 18,
 };
 
 /* program state */
@@ -43,7 +45,11 @@ typedef enum program_state {
   state_quit = 50,
   state_continue,
   state_continue_and_redraw,
-} program_state;
 
+  state_file_submenu,
+  state_level_submenu,
+  state_misc_submenu,
+
+} program_state;
 
 #endif
