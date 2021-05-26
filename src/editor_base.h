@@ -3,6 +3,14 @@
 #ifndef EDITOR_BASE_H
 #define EDITOR_BASE_H
 
+#include "ncurs_ext.h"
+
+#ifdef DEBUG
+enum {
+  debug_delay = 3000,
+};
+#endif
+
 enum {
   local_esc_key   =   27,
   local_enter_key = '\n',  // in WINDOWS / DOS    enter key = 13
@@ -15,8 +23,8 @@ enum {
   pair_main_win_standard,
 
   pair_menu_unactive,
-  pair_menu_item_non_sel,
-  pair_menu_item_sel,
+  pair_menu_item_unselected,
+  pair_menu_item_selected,
 
   pair_empty,
   pair_wall,
@@ -51,5 +59,10 @@ typedef enum program_state {
   state_misc_submenu,
 
 } program_state;
+
+typedef struct editor_obj_coords {
+  scr_point screen_size;
+  scr_point coords_main_win;
+} editor_obj_coords;
 
 #endif

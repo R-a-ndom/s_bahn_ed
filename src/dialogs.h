@@ -24,6 +24,17 @@ extern const menu_item editor_main_menu[];
 
 /*  ---  ++++  ----  */
 
-void show_unactive_main_menu(int main_menu_max, const menu_item main_menu[]);
+void show_unactive_main_menu(int main_menu_max,
+                             const menu_item main_menu[]);
+
+void show_active_main_menu(int position,
+                           int main_menu_max,
+                           const menu_item main_menu[]);
+
+program_state main_menu(editor_obj_coords* coords,
+                        WINDOW* main_win,
+                        int main_menu_max,
+                        const menu_item main_menu[]);
+
 
 #endif

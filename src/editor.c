@@ -18,8 +18,8 @@ void init_all_colors()
   init_pair(pair_main_win_standard, COLOR_BLACK, COLOR_WHITE);
 
   init_pair(pair_menu_unactive, COLOR_BLACK, COLOR_WHITE);
-  init_pair(pair_menu_item_non_sel, COLOR_MAGENTA, COLOR_WHITE);
-  init_pair(pair_menu_item_sel, COLOR_YELLOW, COLOR_WHITE);
+  init_pair(pair_menu_item_unselected, COLOR_MAGENTA, COLOR_WHITE);
+  init_pair(pair_menu_item_selected, COLOR_BLUE, COLOR_BLACK);
 
   init_pair(pair_empty, COLOR_WHITE,  COLOR_BLACK);
   init_pair(pair_wall, COLOR_WHITE, COLOR_YELLOW);
@@ -52,7 +52,6 @@ void draw_stdscr_statics(editor_obj_coords* coords)
     addch(' ');
     current_col++;
   }
-  
 }
 
 void calculate_obj_coords(editor_obj_coords* coords)
@@ -109,6 +108,7 @@ void editor_run()
   WINDOW* main_win;
   editor_obj_coords main_coords;
   chtype sym;
+  program_state state = state_continue;
 
   calculate_obj_coords(&main_coords);
   main_win = newwin(main_win_height,
@@ -135,6 +135,15 @@ void editor_run()
         break;
       }
       case KEY_F(10):
+      {
+        state = main_menu(&main_coords,
+                          main_win,
+                          editor_main_menu_max,
+                          editor_main_menu);
+        editor_redraw(main_win, &main_coords);
+        break;
+      }
+      case KEY_F(12):
       {
         editor_done();
       }
