@@ -4,6 +4,7 @@
 
 #include "ncurs_ext.h"
 #include "editor_base.h"
+#include "draws.h"
 #include "main_win.h"
 
 void draw_main_win_statics(WINDOW* main_win)

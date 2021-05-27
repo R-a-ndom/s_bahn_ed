@@ -4,7 +4,7 @@
 #define DIALOGS_H
 
 enum {
-  editor_main_menu_max = 3,
+  editor_main_menu_max = 2,
 };
 
 enum {

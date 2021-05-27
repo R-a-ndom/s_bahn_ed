@@ -7,11 +7,7 @@
 
 /* screen size and object coords */
 
-void draw_stdscr_statics(editor_obj_coords* coords);
-
 void editor_init();
-
-void editor_redraw(WINDOW* main_win, editor_obj_coords* coords);
 
 void editor_run();
 
