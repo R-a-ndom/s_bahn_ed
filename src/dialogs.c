@@ -9,10 +9,42 @@
 
 const scr_point main_menu_start = { 0, 5 };
 
-const menu_item editor_main_menu[] = {
+const submenu_info file_submenu_info = {
+  {1, 5}, 4, 20
+};
+
+const submenu_info edit_submenu_info = {
+  {1, 18}, 5, 20
+};
+
+const submenu_info misc_submenu_info = {
+  {1, 30}, 2, 20
+};
+
+const menu_item editor_main_menu_data[] = {
   { "    File     ", "Save, load etc...",      state_file_submenu },
-  { "    Level    ", "Level manipulations",    state_level_submenu },
+  { "    Edit    ", "Level manipulations",    state_edit_submenu },
   { "    Misc.    ", "Miscellanious options" , state_misc_submenu }
+};
+
+const menu_item file_submenu_data[] = {
+  { "New      ", "Create a NEW level file",      state_file_submenu },
+  { "Load     ", "Load a level file",      state_file_submenu },
+  { "Save     ", "Save current level file",    state_edit_submenu },
+  { "Exit     ", "Exit" , state_misc_submenu }
+
+};
+const menu_item edit_submenu_data[] = {
+  { "Cut       ", "Cut level and move to clipboard",      state_file_submenu },
+  { "Copy      ", "Copy level to clipboard",    state_edit_submenu },
+  { "Insert    ", "Insert current level from clipboard" , state_misc_submenu },
+  { "Replace   ", "Replace current level from clipboard",      state_file_submenu },
+  { "Clipboard ", "Show clipboard",  state_file_submenu },
+  
+};
+const menu_item misc_submenu_data[] = {
+  { "Help      ", "Show HELP screen",      state_file_submenu },
+  { "About     ", "Show ABOUT screen    ",    state_edit_submenu },
 };
 
 void show_unactive_main_menu(int main_menu_max,
@@ -49,6 +81,44 @@ void show_active_main_menu(int position,
 #endif   
 }
 
+program_state select_submenu(WINDOW* main_win, program_state main_menu_state)
+{
+  switch (main_menu_state) {
+    case state_file_submenu: {
+    	 return submenu(file_submenu_info, file_submenu_data, main_win);
+       break;  
+    }
+    case state_edit_submenu: {
+  	    return submenu(edit_submenu_info, edit_submenu_data, main_win);
+       break;
+    }
+    case state_misc_submenu: {
+      return submenu(misc_submenu_info, misc_submenu_data, main_win);
+      break;  
+    } 
+  } /* switch (main_menu_state) */
+  return state_continue;
+}
+
+program_state submenu(const submenu_info info, const menu_item submenu[], WINDOW* main_win)
+{
+  int submenu_win_width, submenu_win_height;
+  	
+  WINDOW* submenu_win;
+  submenu_win_height = info.count + 2;
+  submenu_win_width  = info.width + 2;
+  
+  submenu_win = newwin(submenu_win_height, submenu_win_width, info.submenu_ltop.row, info.submenu_ltop.col);
+  wbkgd(submenu_win, COLOR_PAIR(pair_menu_item_unselected));
+  wdraw_frame(submenu_win, submenu_win_height, submenu_win_width, zero_point, show_frame);
+  wrefresh(stdscr);
+  touchwin(main_win);
+  wrefresh(submenu_win);
+  napms(3000);
+  delwin(submenu_win);
+  return state_continue;
+}
+
 program_state main_menu(editor_obj_coords* coords,
                         WINDOW* main_win,
                         int main_menu_max,
@@ -56,6 +126,8 @@ program_state main_menu(editor_obj_coords* coords,
 {
   chtype sym;
   int pos = 0;
+  program_state tmp_state = state_continue;
+  
   show_active_main_menu(pos, main_menu_max, main_menu);
   touchwin(main_win);
   wrefresh(stdscr);
@@ -96,13 +168,14 @@ program_state main_menu(editor_obj_coords* coords,
           break;
        }
        case KEY_DOWN:
-       case KEY_ENTER:
        {
-          return state_continue;
+          tmp_state = select_submenu(main_win, main_menu[pos].state);
+          return tmp_state;
        }
     }   /* switch (sym) */
   }     /* for(;;)      */
-  show_unactive_main_menu(editor_main_menu_max, editor_main_menu);
+  show_unactive_main_menu(editor_main_menu_max, editor_main_menu_data);
   touchwin(main_win);
   wrefresh(stdscr);
+  return tmp_state;
 }

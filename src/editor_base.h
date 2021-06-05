@@ -55,7 +55,7 @@ typedef enum program_state {
   state_continue_and_redraw,
 
   state_file_submenu,
-  state_level_submenu,
+  state_edit_submenu,
   state_misc_submenu,
 
 } program_state;

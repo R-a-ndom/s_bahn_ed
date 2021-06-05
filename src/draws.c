@@ -65,7 +65,7 @@ void editor_redraw(WINDOW* main_win, editor_obj_coords* coords, int need_to_draw
   calculate_obj_coords(coords);
   draw_stdscr_statics(coords);
   if (need_to_draw_menu == draw_main_menu) {
-    show_unactive_main_menu(editor_main_menu_max, editor_main_menu);
+    show_unactive_main_menu(editor_main_menu_max, editor_main_menu_data);
   }  
   mvwin(main_win,
         coords->coords_main_win.row, coords->coords_main_win.col);

@@ -71,7 +71,7 @@ void editor_run()
         state = main_menu(&main_coords,
                           main_win,
                           editor_main_menu_max,
-                          editor_main_menu);
+                          editor_main_menu_data);
         editor_redraw(main_win, &main_coords, draw_main_menu);
         break;
       }
