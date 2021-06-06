@@ -8,7 +8,7 @@
 void init_all_colors()
 {
   init_pair(pair_standard, COLOR_WHITE, COLOR_BLACK);
-  init_pair(pair_main_win_standard, COLOR_BLACK, COLOR_WHITE);
+  init_pair(pair_main_win_standard, COLOR_BLACK, COLOR_CYAN);
 
   init_pair(pair_menu_unactive, COLOR_BLACK, COLOR_WHITE);
   init_pair(pair_menu_item_unselected, COLOR_MAGENTA, COLOR_WHITE);

@@ -37,9 +37,9 @@ void show_active_main_menu(int position,
                            int main_menu_max,
                            const menu_item main_menu[]);
                            
-program_state select_submenu(WINDOW* main_win, program_state main_menu_state);
+program_state submenu(WINDOW* main_win, program_state main_menu_state);
 
-program_state submenu(const submenu_info info, const menu_item submenu[], WINDOW* main_win);
+program_state submenu_action(const submenu_info info, const menu_item submenu[], WINDOW* main_win);
 
 program_state main_menu(editor_obj_coords* coords,
                         WINDOW* main_win,

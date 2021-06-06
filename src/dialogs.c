@@ -18,33 +18,33 @@ const submenu_info edit_submenu_info = {
 };
 
 const submenu_info misc_submenu_info = {
-  {1, 30}, 2, 20
+  {1, 31}, 2, 20
 };
 
 const menu_item editor_main_menu_data[] = {
-  { "    File     ", "Save, load etc...",      state_file_submenu },
-  { "    Edit    ", "Level manipulations",    state_edit_submenu },
+  { "    File     ", "Save, load etc...", state_file_submenu },
+  { "    Edit     ", "Level manipulations", state_edit_submenu },
   { "    Misc.    ", "Miscellanious options" , state_misc_submenu }
 };
 
 const menu_item file_submenu_data[] = {
-  { "New      ", "Create a NEW level file",      state_file_submenu },
-  { "Load     ", "Load a level file",      state_file_submenu },
-  { "Save     ", "Save current level file",    state_edit_submenu },
-  { "Exit     ", "Exit" , state_misc_submenu }
+  { "New      ", "Create a NEW level file",  state_file_submenu },
+  { "Load     ", "Load a level file", state_file_submenu },
+  { "Save     ", "Save current level file", state_edit_submenu },
+  { "Exit     ", "Exit from editor" , state_misc_submenu }
 
 };
 const menu_item edit_submenu_data[] = {
-  { "Cut       ", "Cut level and move to clipboard",      state_file_submenu },
-  { "Copy      ", "Copy level to clipboard",    state_edit_submenu },
+  { "Cut       ", "Cut level and move to clipboard",  state_file_submenu },
+  { "Copy      ", "Copy level to clipboard",  state_edit_submenu },
   { "Insert    ", "Insert current level from clipboard" , state_misc_submenu },
-  { "Replace   ", "Replace current level from clipboard",      state_file_submenu },
+  { "Replace   ", "Replace current level from clipboard", state_file_submenu },
   { "Clipboard ", "Show clipboard",  state_file_submenu },
   
 };
 const menu_item misc_submenu_data[] = {
-  { "Help      ", "Show HELP screen",      state_file_submenu },
-  { "About     ", "Show ABOUT screen    ",    state_edit_submenu },
+  { "Help      ", "Show HELP screen",  state_file_submenu },
+  { "About     ", "Show ABOUT screen",  state_edit_submenu },
 };
 
 void show_unactive_main_menu(int main_menu_max,
@@ -68,56 +68,91 @@ void show_active_main_menu(int position,
   move(main_menu_start.row, main_menu_start.col);
   while (current_pos <= editor_main_menu_max )
   {
-    if (current_pos != position)
-      attrset(COLOR_PAIR(pair_menu_item_unselected) | A_BOLD);
+    if (current_pos == position)
+      attrset(COLOR_PAIR(pair_menu_item_selected) | A_BOLD);
     else
-      attrset(COLOR_PAIR(pair_menu_item_selected) | A_NORMAL);
+      attrset(COLOR_PAIR(pair_menu_item_unselected) | A_NORMAL);
     printw(main_menu[current_pos].caption);
     current_pos++;
   }
 #ifdef DEBUG
   attrset(COLOR_PAIR(pair_menu_unactive) | A_NORMAL );
-  printw("%d", position);
+  printw("  %d", position);
 #endif   
 }
 
-program_state select_submenu(WINDOW* main_win, program_state main_menu_state)
+
+static void show_submenu(WINDOW* submenu_win,
+                         const int current_pos,
+                         const submenu_info info,
+                         const menu_item submenu[])
+{
+  int i = 0;
+  while ( i < info.count ) 
+  {
+    wmove(submenu_win, i+1, 1);
+    if (i != current_pos)
+      wattrset(submenu_win, COLOR_PAIR(pair_menu_item_unselected) | A_BOLD);
+    else
+      wattrset(submenu_win, COLOR_PAIR(pair_menu_item_selected) | A_NORMAL);
+    wprintw(submenu_win, submenu[i].caption);
+    i++;
+  }
+}
+
+program_state submenu_action(const submenu_info info,
+                             const menu_item submenu[],
+                             WINDOW* main_win)
+{
+  int submenu_win_width, submenu_win_height;
+  WINDOW* submenu_win;
+  int current_pos = 0;
+  chtype sym;
+
+  submenu_win_height = info.count + 2;
+  submenu_win_width  = info.width + 2;
+  
+  submenu_win = newwin(submenu_win_height,
+                       submenu_win_width,
+                       info.submenu_ltop.row,
+                       info.submenu_ltop.col);
+  wbkgd(submenu_win, COLOR_PAIR(pair_menu_item_unselected));
+  wdraw_frame(submenu_win,
+              submenu_win_height, submenu_win_width,
+              zero_point,
+              show_frame);
+  show_submenu(submenu_win, current_pos, info, submenu);
+  wrefresh(stdscr);
+  touchwin(main_win);
+  wrefresh(submenu_win);
+  keypad(submenu_win, TRUE);
+  do {
+    sym = wgetch(submenu_win);
+  } while ((sym  != local_esc_key  ) && 
+           ( sym != local_enter_key)); /* do - while */
+  delwin(submenu_win);
+  return state_continue;
+}
+
+program_state submenu(WINDOW* main_win, program_state main_menu_state)
 {
   switch (main_menu_state) {
     case state_file_submenu: {
-    	 return submenu(file_submenu_info, file_submenu_data, main_win);
+    	 return submenu_action(file_submenu_info, file_submenu_data, main_win);
        break;  
     }
     case state_edit_submenu: {
-  	    return submenu(edit_submenu_info, edit_submenu_data, main_win);
+  	    return submenu_action(edit_submenu_info, edit_submenu_data, main_win);
        break;
     }
     case state_misc_submenu: {
-      return submenu(misc_submenu_info, misc_submenu_data, main_win);
+      return submenu_action(misc_submenu_info, misc_submenu_data, main_win);
       break;  
     } 
   } /* switch (main_menu_state) */
   return state_continue;
 }
 
-program_state submenu(const submenu_info info, const menu_item submenu[], WINDOW* main_win)
-{
-  int submenu_win_width, submenu_win_height;
-  	
-  WINDOW* submenu_win;
-  submenu_win_height = info.count + 2;
-  submenu_win_width  = info.width + 2;
-  
-  submenu_win = newwin(submenu_win_height, submenu_win_width, info.submenu_ltop.row, info.submenu_ltop.col);
-  wbkgd(submenu_win, COLOR_PAIR(pair_menu_item_unselected));
-  wdraw_frame(submenu_win, submenu_win_height, submenu_win_width, zero_point, show_frame);
-  wrefresh(stdscr);
-  touchwin(main_win);
-  wrefresh(submenu_win);
-  napms(3000);
-  delwin(submenu_win);
-  return state_continue;
-}
 
 program_state main_menu(editor_obj_coords* coords,
                         WINDOW* main_win,
@@ -169,7 +204,7 @@ program_state main_menu(editor_obj_coords* coords,
        }
        case KEY_DOWN:
        {
-          tmp_state = select_submenu(main_win, main_menu[pos].state);
+          tmp_state = submenu(main_win, main_menu[pos].state);
           return tmp_state;
        }
     }   /* switch (sym) */
