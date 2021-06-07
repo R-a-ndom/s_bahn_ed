@@ -2,8 +2,7 @@
 #define DRAWS_H
 
 enum {
-  draw_main_menu,
-  no_draw_main_menu,
+  unactive_main_menu = -1,
 };
 
 void init_all_colors();

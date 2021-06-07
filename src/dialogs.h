@@ -30,12 +30,9 @@ extern const menu_item editor_main_menu_data[];
 
 /*  ---  ++++  ----  */
 
-void show_unactive_main_menu(int main_menu_max,
-                             const menu_item main_menu[]);
-
-void show_active_main_menu(int position,
-                           int main_menu_max,
-                           const menu_item main_menu[]);
+void show_main_menu(int main_menu_max,
+                    const menu_item main_menu[],
+                    int position);
                            
 program_state submenu(WINDOW* main_win, program_state main_menu_state);
 

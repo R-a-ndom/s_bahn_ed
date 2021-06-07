@@ -47,38 +47,33 @@ const menu_item misc_submenu_data[] = {
   { "About     ", "Show ABOUT screen",  state_edit_submenu },
 };
 
-void show_unactive_main_menu(int main_menu_max,
-                             const menu_item main_menu[])
-{
-  int current_pos = 0;
-  move(main_menu_start.row, main_menu_start.col);
-  attrset(COLOR_PAIR(pair_menu_unactive) | A_NORMAL);
-  while (current_pos <= editor_main_menu_max)
-  {
-    printw(main_menu[current_pos].caption);
-    current_pos++;
-  }
-}
 
-void show_active_main_menu(int position,
-                           int main_menu_max,
-                           const menu_item main_menu[])
+void show_main_menu(int main_menu_max,
+                    const menu_item main_menu[],
+                    int position)
 {
   int current_pos = 0;
   move(main_menu_start.row, main_menu_start.col);
-  while (current_pos <= editor_main_menu_max )
-  {
-    if (current_pos == position)
-      attrset(COLOR_PAIR(pair_menu_item_selected) | A_BOLD);
-    else
-      attrset(COLOR_PAIR(pair_menu_item_unselected) | A_NORMAL);
-    printw(main_menu[current_pos].caption);
-    current_pos++;
-  }
+  if ( position == unactive_main_menu ) {
+    attrset(COLOR_PAIR(pair_menu_unactive) | A_NORMAL);
+    while (current_pos <= editor_main_menu_max) {
+      printw(main_menu[current_pos].caption);
+      current_pos++;
+    }
+  } else {
+    while (current_pos <= editor_main_menu_max ) {
+      if (current_pos == position)
+        attrset(COLOR_PAIR(pair_menu_item_selected) | A_BOLD);
+      else
+        attrset(COLOR_PAIR(pair_menu_item_unselected) | A_NORMAL);
+      printw(main_menu[current_pos].caption);
+      current_pos++;
+    }
 #ifdef DEBUG
   attrset(COLOR_PAIR(pair_menu_unactive) | A_NORMAL );
   printw("  %d", position);
 #endif   
+  }
 }
 
 
@@ -88,13 +83,12 @@ static void show_submenu(WINDOW* submenu_win,
                          const menu_item submenu[])
 {
   int i = 0;
-  while ( i < info.count ) 
-  {
+  while ( i < info.count ) {
     wmove(submenu_win, i+1, 1);
-    if (i != current_pos)
-      wattrset(submenu_win, COLOR_PAIR(pair_menu_item_unselected) | A_BOLD);
+    if (i == current_pos)
+      wattrset(submenu_win, COLOR_PAIR(pair_menu_item_selected) | A_BOLD);
     else
-      wattrset(submenu_win, COLOR_PAIR(pair_menu_item_selected) | A_NORMAL);
+      wattrset(submenu_win, COLOR_PAIR(pair_menu_item_unselected) | A_NORMAL);
     wprintw(submenu_win, submenu[i].caption);
     i++;
   }
@@ -108,7 +102,8 @@ program_state submenu_action(const submenu_info info,
   WINDOW* submenu_win;
   int current_pos = 0;
   chtype sym;
-
+  program_state tmp_state = state_continue;
+  
   submenu_win_height = info.count + 2;
   submenu_win_width  = info.width + 2;
   
@@ -128,10 +123,27 @@ program_state submenu_action(const submenu_info info,
   keypad(submenu_win, TRUE);
   do {
     sym = wgetch(submenu_win);
+    switch (sym) {
+      case KEY_RESIZE: {
+         break;             
+      }    
+      case KEY_UP: {
+         break;
+      }
+      case KEY_DOWN: {
+         break;
+      }
+      case local_esc_key: {
+         break;
+      }
+      case local_enter_key: {
+         break;
+      }
+    } /* switch (sym) */  
   } while ((sym  != local_esc_key  ) && 
            ( sym != local_enter_key)); /* do - while */
   delwin(submenu_win);
-  return state_continue;
+  return tmp_state;
 }
 
 program_state submenu(WINDOW* main_win, program_state main_menu_state)
@@ -163,53 +175,47 @@ program_state main_menu(editor_obj_coords* coords,
   int pos = 0;
   program_state tmp_state = state_continue;
   
-  show_active_main_menu(pos, main_menu_max, main_menu);
+  show_main_menu(main_menu_max, main_menu, pos);
   touchwin(main_win);
   wrefresh(stdscr);
   keypad(stdscr, TRUE);
-  for(;;)
-  {
+  for(;;) {
     sym = wgetch(stdscr);
     switch (sym)
     {
-       case KEY_RESIZE:
-       {
-          editor_redraw(main_win, coords, no_draw_main_menu);
-          show_active_main_menu(pos, main_menu_max, main_menu);
-          touchwin(main_win);
-          wrefresh(stdscr);
-          break;
+       case KEY_RESIZE: {
+         editor_redraw(main_win, coords, pos);
+         touchwin(main_win);
+         wrefresh(stdscr);
+         break;
        }
-       case KEY_LEFT: /* <<< */
-       {
-          if (pos > 0)
-          {
-          	pos--;
-            show_active_main_menu(pos, main_menu_max, main_menu);
-            touchwin(main_win);
-            wrefresh(stdscr);
-          }  
-          break;
+       case KEY_LEFT: { /* <<< */
+         if (pos > 0) {
+           pos--;
+           show_main_menu(main_menu_max, main_menu, pos);
+           touchwin(main_win);
+           wrefresh(stdscr);
+         }  
+         break;
        }
-       case KEY_RIGHT: /* >>> */
-       {
-          if (pos < main_menu_max )
-          {
-          	pos++;
-            show_active_main_menu(pos, main_menu_max, main_menu);
-            touchwin(main_win);
-            wrefresh(stdscr);
-          }  
-          break;
+       case KEY_RIGHT: { /* >>> */
+         if (pos < main_menu_max ) {
+           pos++;
+           show_main_menu(main_menu_max, main_menu, pos);
+           touchwin(main_win);
+           wrefresh(stdscr);
+         }  
+         break;
        }
-       case KEY_DOWN:
-       {
-          tmp_state = submenu(main_win, main_menu[pos].state);
-          return tmp_state;
+       case KEY_DOWN: {
+         tmp_state = submenu(main_win, main_menu[pos].state);
+         return tmp_state;
        }
     }   /* switch (sym) */
   }     /* for(;;)      */
-  show_unactive_main_menu(editor_main_menu_max, editor_main_menu_data);
+  show_main_menu(editor_main_menu_max,
+                 editor_main_menu_data,
+                 unactive_main_menu);
   touchwin(main_win);
   wrefresh(stdscr);
   return tmp_state;

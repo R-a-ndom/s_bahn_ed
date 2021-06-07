@@ -51,7 +51,7 @@ void editor_run()
                     main_coords.coords_main_win.row,
                     main_coords.coords_main_win.col );
   draw_main_win_statics(main_win);
-  editor_redraw(main_win, &main_coords, draw_main_menu);
+  editor_redraw(main_win, &main_coords, unactive_main_menu);
   keypad(main_win, TRUE);
 
 /* MAIN CYCLE */
@@ -63,7 +63,7 @@ void editor_run()
     {
       case KEY_RESIZE:
       {
-        editor_redraw(main_win, &main_coords, draw_main_menu);
+        editor_redraw(main_win, &main_coords, unactive_main_menu);
         break;
       }
       case KEY_F(10):
@@ -72,7 +72,7 @@ void editor_run()
                           main_win,
                           editor_main_menu_max,
                           editor_main_menu_data);
-        editor_redraw(main_win, &main_coords, draw_main_menu);
+        editor_redraw(main_win, &main_coords, unactive_main_menu);
         break;
       }
       case KEY_F(12):

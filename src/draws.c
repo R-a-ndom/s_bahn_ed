@@ -41,8 +41,7 @@ void draw_stdscr_statics(editor_obj_coords* coords)
 {
   int current_col = 0;
   attrset(COLOR_PAIR(pair_standard) | A_NORMAL);
-  while (current_col < coords->screen_size.col)
-  {
+  while (current_col < coords->screen_size.col) {
     move(1, current_col);
     addch('-');
     move(coords->screen_size.row - 2, current_col);
@@ -52,21 +51,18 @@ void draw_stdscr_statics(editor_obj_coords* coords)
   current_col = 0;
   attrset(COLOR_PAIR(pair_menu_unactive) | A_NORMAL);
   move(0, 0);
-  while (current_col < coords->screen_size.col)
-  {
+  while (current_col < coords->screen_size.col) {
     addch(' ');
     current_col++;
   }
 }
 
-void editor_redraw(WINDOW* main_win, editor_obj_coords* coords, int need_to_draw_menu)
+void editor_redraw(WINDOW* main_win, editor_obj_coords* coords, int main_menu_pos)
 {
   erase();
   calculate_obj_coords(coords);
   draw_stdscr_statics(coords);
-  if (need_to_draw_menu == draw_main_menu) {
-    show_unactive_main_menu(editor_main_menu_max, editor_main_menu_data);
-  }  
+  show_main_menu(editor_main_menu_max, editor_main_menu_data, main_menu_pos);  
   mvwin(main_win,
         coords->coords_main_win.row, coords->coords_main_win.col);
   wrefresh(stdscr);
