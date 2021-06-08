@@ -15,7 +15,7 @@ enum {
 typedef struct menu_item {
   char caption[menu_caption_max];
   char hint[menu_hint_max];
-  program_state state;
+  program_event action;
 } menu_item;
 
 typedef struct submenu_info {
@@ -34,11 +34,11 @@ void show_main_menu(int main_menu_max,
                     const menu_item main_menu[],
                     int position);
                            
-program_state submenu(WINDOW* main_win, program_state main_menu_state);
+program_event submenu(WINDOW* main_win, program_event main_menu_event);
 
-program_state submenu_action(const submenu_info info, const menu_item submenu[], WINDOW* main_win);
+program_event submenu_action(const submenu_info info, const menu_item submenu[], WINDOW* main_win);
 
-program_state main_menu(editor_obj_coords* coords,
+program_event main_menu(program_condition* condition,
                         WINDOW* main_win,
                         int main_menu_max,
                         const menu_item main_menu[]);

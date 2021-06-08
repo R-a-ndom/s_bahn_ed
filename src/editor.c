@@ -13,17 +13,23 @@
 #include "main_win.h"
 #include "editor.h"
 
+program_condition init_program_condition()
+{
+  program_condition tmp;
+  calculate_obj_coords(&tmp, NULL);
+  tmp.main_menu_pos = main_menu_unactive;
+  tmp.second_win_state = second_win_is_other;
+  return tmp;
+}
 
 void editor_init()
 {
   initscr();
-  if ( !has_colors() )
-  {
+  if ( !has_colors() ) {
     fprintf(stderr, "Terminal not supports COLORS !\n");
     exit(1);
   }
-  if ( start_color() != OK )
-  {
+  if ( start_color() != OK ) {
     fprintf(stderr, "Unable to start COLORS !\n");
     exit(2);
   }
@@ -42,41 +48,37 @@ void editor_done()
 void editor_run()
 {
   WINDOW* main_win;
-  editor_obj_coords main_coords;
   chtype sym;
-  program_state state = state_continue;
-  calculate_obj_coords(&main_coords);
+  program_event event = ev_continue;
+  program_condition condition; 
+  
+  condition = init_program_condition();
   main_win = newwin(main_win_height,
                     main_win_width,
-                    main_coords.coords_main_win.row,
-                    main_coords.coords_main_win.col );
+                    condition.begin_main_win.row,
+                    condition.begin_main_win.col );
   draw_main_win_statics(main_win);
-  editor_redraw(main_win, &main_coords, unactive_main_menu);
+  editor_redraw(main_win, NULL, &condition);
   keypad(main_win, TRUE);
 
 /* MAIN CYCLE */
 
-  for(;;)
-  {
+  for(;;) {
     sym = wgetch(main_win);
-    switch (sym)
-    {
-      case KEY_RESIZE:
-      {
-        editor_redraw(main_win, &main_coords, unactive_main_menu);
+    switch (sym) {
+      case KEY_RESIZE: {
+        editor_redraw(main_win, NULL, &condition);
         break;
       }
-      case KEY_F(10):
-      {
-        state = main_menu(&main_coords,
+      case KEY_F(10): {
+        event = main_menu(&condition,
                           main_win,
                           editor_main_menu_max,
                           editor_main_menu_data);
-        editor_redraw(main_win, &main_coords, unactive_main_menu);
+        editor_redraw(main_win, NULL, &condition);
         break;
       }
-      case KEY_F(12):
-      {
+      case KEY_F(12): {
         editor_done();
       }
     } /* switch (sym) */

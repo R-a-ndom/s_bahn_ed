@@ -1,16 +1,12 @@
 #ifndef DRAWS_H
 #define DRAWS_H
 
-enum {
-  unactive_main_menu = -1,
-};
-
 void init_all_colors();
 
-void calculate_obj_coords(editor_obj_coords* coords);
+void calculate_obj_coords(program_condition* condition, WINDOW* second_win);
 
-void draw_stdscr_statics(editor_obj_coords* coords);
+void draw_stdscr_statics(program_condition* condition);
 
-void editor_redraw(WINDOW* main_win, editor_obj_coords* coords, int need_to_draw_menu);
+void editor_redraw(WINDOW* main_win, WINDOW* second_win, program_condition* condition);
 
 #endif

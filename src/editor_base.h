@@ -49,20 +49,29 @@ enum {
 
 /* program state */
 
-typedef enum program_state {
-  state_quit = 50,
-  state_continue,
-  state_continue_and_redraw,
+typedef enum program_event {
+  ev_quit = 50,
+  ev_continue,
+  ev_continue_and_redraw,
 
-  state_file_submenu,
-  state_edit_submenu,
-  state_misc_submenu,
+  ev_file_submenu,
+  ev_edit_submenu,
+  ev_misc_submenu,
 
-} program_state;
+} program_event;
 
-typedef struct editor_obj_coords {
+enum {
+  second_win_is_submenu,
+  second_win_is_other,
+  main_menu_unactive = -1,
+};
+
+typedef struct program_condition {
   scr_point screen_size;
-  scr_point coords_main_win;
-} editor_obj_coords;
+  scr_point begin_main_win;
+  scr_point begin_second_win;
+  int main_menu_pos;
+  int second_win_state; 
+} program_condition;
 
 #endif

@@ -7,6 +7,8 @@
 
 /* screen size and object coords */
 
+program_condition init_program_condition();
+
 void editor_init();
 
 void editor_run();
