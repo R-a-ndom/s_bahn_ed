@@ -58,7 +58,7 @@ void editor_run()
                     condition.begin_main_win.row,
                     condition.begin_main_win.col );
   draw_main_win_statics(main_win);
-  editor_redraw(main_win, NULL, &condition);
+  editor_redraw(&condition, main_win, NULL);
   keypad(main_win, TRUE);
 
 /* MAIN CYCLE */
@@ -67,7 +67,7 @@ void editor_run()
     sym = wgetch(main_win);
     switch (sym) {
       case KEY_RESIZE: {
-        editor_redraw(main_win, NULL, &condition);
+        editor_redraw(&condition, main_win, NULL);
         break;
       }
       case KEY_F(10): {
@@ -75,7 +75,7 @@ void editor_run()
                           main_win,
                           editor_main_menu_max,
                           editor_main_menu_data);
-        editor_redraw(main_win, NULL, &condition);
+        editor_redraw(&condition, main_win, NULL);
         break;
       }
       case KEY_F(12): {

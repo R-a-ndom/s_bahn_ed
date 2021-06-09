@@ -20,7 +20,7 @@ typedef struct menu_item {
 
 typedef struct submenu_info {
   scr_point submenu_ltop;
-  int count;
+  int max;
   int width;
 } submenu_info;
 
@@ -34,9 +34,9 @@ void show_main_menu(int main_menu_max,
                     const menu_item main_menu[],
                     int position);
                            
-program_event submenu(WINDOW* main_win, program_event main_menu_event);
+program_event submenu(program_condition* condition, WINDOW* main_win, program_event main_menu_event);
 
-program_event submenu_action(const submenu_info info, const menu_item submenu[], WINDOW* main_win);
+program_event submenu_action(program_condition* condition, const submenu_info info, const menu_item submenu[], WINDOW* main_win);
 
 program_event main_menu(program_condition* condition,
                         WINDOW* main_win,

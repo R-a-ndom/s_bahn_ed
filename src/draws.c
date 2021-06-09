@@ -74,7 +74,7 @@ void draw_stdscr_statics(program_condition* condition)
   }
 }
 
-void editor_redraw(WINDOW* main_win, WINDOW* second_win, program_condition* condition)
+void editor_redraw(program_condition* condition, WINDOW* main_win, WINDOW* second_win)
 {
   erase();
   calculate_obj_coords(condition, second_win);

@@ -83,7 +83,7 @@ static void show_submenu(WINDOW* submenu_win,
                          const menu_item submenu[])
 {
   int i = 0;
-  while ( i < info.count ) {
+  while ( i < info.max ) {
     wmove(submenu_win, i+1, 1);
     if (i == current_pos)
       wattrset(submenu_win, COLOR_PAIR(pair_menu_item_selected) | A_BOLD);
@@ -94,7 +94,18 @@ static void show_submenu(WINDOW* submenu_win,
   }
 }
 
-program_event submenu_action(const submenu_info info,
+#ifdef DEBUG
+static void debug_print_submenu_pos(WINDOW* submenu_win, int pos)
+{
+  wattrset(submenu_win, COLOR_PAIR(pair_menu_item_unselected) | A_NORMAL);
+  wmove(submenu_win, 0,0);
+  wprintw(submenu_win, "%d", pos); 
+}
+#endif          
+
+
+program_event submenu_action(program_condition* condition,
+                             const submenu_info info,
                              const menu_item submenu[],
                              WINDOW* main_win)
 {
@@ -104,7 +115,7 @@ program_event submenu_action(const submenu_info info,
   chtype sym;
   program_event tmp_event = ev_continue;
   
-  submenu_win_height = info.count + 2;
+  submenu_win_height = info.max + 2;
   submenu_win_width  = info.width + 2;
   
   submenu_win = newwin(submenu_win_height,
@@ -117,6 +128,9 @@ program_event submenu_action(const submenu_info info,
               zero_point,
               show_frame);
   show_submenu(submenu_win, current_pos, info, submenu);
+#ifdef DEBUG
+  debug_print_submenu_pos(submenu_win, current_pos);
+#endif
   wrefresh(stdscr);
   touchwin(main_win);
   wrefresh(submenu_win);
@@ -125,13 +139,30 @@ program_event submenu_action(const submenu_info info,
     sym = wgetch(submenu_win);
     switch (sym) {
       case KEY_RESIZE: {
+      	editor_redraw(condition, main_win, submenu_win);
          break;             
       }    
       case KEY_UP: {
-         break;
+        if (current_pos > 0) {
+          current_pos--;
+          show_submenu(submenu_win, current_pos, info, submenu);
+#ifdef DEBUG
+          debug_print_submenu_pos(submenu_win, current_pos);
+#endif
+          wrefresh(submenu_win);
+        }
+        break;
       }
       case KEY_DOWN: {
-         break;
+        if (current_pos < info.max - 1) {
+          current_pos++;
+          show_submenu(submenu_win, current_pos, info, submenu);
+#ifdef DEBUG
+          debug_print_submenu_pos(submenu_win, current_pos);
+#endif
+          wrefresh(submenu_win);
+        }      	
+        break;
       }
       case local_esc_key: {
          break;
@@ -146,22 +177,24 @@ program_event submenu_action(const submenu_info info,
   return tmp_event;
 }
 
-program_event submenu(WINDOW* main_win, program_event main_menu_event)
+program_event submenu(program_condition* condition, WINDOW* main_win, program_event main_menu_event)
 {
+  condition->second_win_state = second_win_is_submenu;	
   switch (main_menu_event) {
     case ev_file_submenu: {
-    	 return submenu_action(file_submenu_info, file_submenu_data, main_win);
+    	 return submenu_action(condition, file_submenu_info, file_submenu_data, main_win);
        break;  
     }
     case ev_edit_submenu: {
-  	    return submenu_action(edit_submenu_info, edit_submenu_data, main_win);
+  	    return submenu_action(condition, edit_submenu_info, edit_submenu_data, main_win);
        break;
     }
     case ev_misc_submenu: {
-      return submenu_action(misc_submenu_info, misc_submenu_data, main_win);
+      return submenu_action(condition, misc_submenu_info, misc_submenu_data, main_win);
       break;  
     } 
   } /* switch (main_menu_state) */
+  condition->second_win_state = second_win_is_other;	
   return ev_continue;
 }
 
@@ -184,7 +217,7 @@ program_event main_menu(program_condition* condition,
     switch (sym)
     {
        case KEY_RESIZE: {
-         editor_redraw(main_win, NULL, condition);
+         editor_redraw(condition, main_win, NULL);
          touchwin(main_win);
          wrefresh(stdscr);
          break;
@@ -208,7 +241,7 @@ program_event main_menu(program_condition* condition,
          break;
        }
        case KEY_DOWN: {
-         tmp_event = submenu(main_win, main_menu[pos].action);
+         tmp_event = submenu(condition, main_win, main_menu[pos].action);
          return tmp_event;
        }
     }   /* switch (sym) */
