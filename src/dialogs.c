@@ -212,14 +212,13 @@ program_event main_menu(program_condition* condition,
   touchwin(main_win);
   wrefresh(stdscr);
   keypad(stdscr, TRUE);
-  for(;;) {
+  do {
     sym = wgetch(stdscr);
     switch (sym)
     {
        case KEY_RESIZE: {
+       	condition->main_menu_pos = pos;
          editor_redraw(condition, main_win, NULL);
-         touchwin(main_win);
-         wrefresh(stdscr);
          break;
        }
        case KEY_LEFT: { /* <<< */
@@ -240,16 +239,18 @@ program_event main_menu(program_condition* condition,
          }  
          break;
        }
+       case local_esc_key: {
+         tmp_event = ev_exit_from_menu;
+         break;       
+       }
        case KEY_DOWN: {
+         condition->main_menu_pos = pos;
          tmp_event = submenu(condition, main_win, main_menu[pos].action);
-         return tmp_event;
+         break;
        }
     }   /* switch (sym) */
-  }     /* for(;;)      */
-  show_main_menu(editor_main_menu_max,
-                 editor_main_menu_data,
-                 main_menu_unactive);
-  touchwin(main_win);
-  wrefresh(stdscr);
+  } while (tmp_event == ev_continue); /* DO {} WHILE */
+  condition->main_menu_pos = main_menu_unactive;
+  editor_redraw(condition, main_win, NULL);
   return tmp_event;
 }

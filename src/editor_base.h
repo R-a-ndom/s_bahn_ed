@@ -53,6 +53,7 @@ typedef enum program_event {
   ev_quit = 50,
   ev_continue,
   ev_continue_and_redraw,
+  ev_exit_from_menu,
 
   ev_file_submenu,
   ev_edit_submenu,
