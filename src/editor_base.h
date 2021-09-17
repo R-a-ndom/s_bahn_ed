@@ -13,7 +13,7 @@ enum {
 
 enum {
   local_esc_key   =   27,
-  local_enter_key = '\n',  // in WINDOWS / DOS    enter key = 13
+  local_enter_key = '\n',  // in WINDOWS-MSDOS enter key = 13
 };
 
 /* color pairs */
@@ -72,7 +72,7 @@ typedef struct program_condition {
   scr_point begin_main_win;
   scr_point begin_second_win;
   int main_menu_pos;
-  int second_win_state; 
+  int second_win_state;
 } program_condition;
 
-#endif
+#endifOD

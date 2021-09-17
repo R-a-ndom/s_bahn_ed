@@ -50,8 +50,8 @@ void editor_run()
   WINDOW* main_win;
   chtype sym;
   program_event event = ev_continue;
-  program_condition condition; 
-  
+  program_condition condition;
+
   condition = init_program_condition();
   main_win = newwin(main_win_height,
                     main_win_width,

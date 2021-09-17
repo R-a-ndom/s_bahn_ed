@@ -72,7 +72,7 @@ void show_main_menu(int main_menu_max,
 #ifdef DEBUG
   attrset(COLOR_PAIR(pair_menu_unactive) | A_NORMAL );
   printw("  %d", position);
-#endif   
+#endif
   }
 }
 
@@ -99,9 +99,9 @@ static void debug_print_submenu_pos(WINDOW* submenu_win, int pos)
 {
   wattrset(submenu_win, COLOR_PAIR(pair_menu_item_unselected) | A_NORMAL);
   wmove(submenu_win, 0,0);
-  wprintw(submenu_win, "%d", pos); 
+  wprintw(submenu_win, "%d", pos);
 }
-#endif          
+#endif
 
 
 program_event submenu_action(program_condition* condition,
@@ -114,10 +114,10 @@ program_event submenu_action(program_condition* condition,
   int current_pos = 0;
   chtype sym;
   program_event tmp_event = ev_continue;
-  
+
   submenu_win_height = info.max + 2;
   submenu_win_width  = info.width + 2;
-  
+
   submenu_win = newwin(submenu_win_height,
                        submenu_win_width,
                        info.submenu_ltop.row,
@@ -139,9 +139,9 @@ program_event submenu_action(program_condition* condition,
     sym = wgetch(submenu_win);
     switch (sym) {
       case KEY_RESIZE: {
-      	editor_redraw(condition, main_win, submenu_win);
-         break;             
-      }    
+         editor_redraw(condition, main_win, submenu_win);
+         break;
+      }
       case KEY_UP: {
         if (current_pos > 0) {
           current_pos--;
@@ -161,7 +161,7 @@ program_event submenu_action(program_condition* condition,
           debug_print_submenu_pos(submenu_win, current_pos);
 #endif
           wrefresh(submenu_win);
-        }      	
+        }
         break;
       }
       case local_esc_key: {
@@ -170,34 +170,36 @@ program_event submenu_action(program_condition* condition,
       case local_enter_key: {
          break;
       }
-    } /* switch (sym) */  
-  } while ((sym  != local_esc_key  ) && 
+    } /* switch (sym) */
+  } while ((sym  != local_esc_key  ) &&
            ( sym != local_enter_key)); /* do - while */
   delwin(submenu_win);
   return tmp_event;
 }
 
-program_event submenu(program_condition* condition, WINDOW* main_win, program_event main_menu_event)
+program_event submenu(program_condition* condition,
+                      WINDOW* main_win,
+                      program_event main_menu_event)
+
 {
-  condition->second_win_state = second_win_is_submenu;	
+  condition->second_win_state = second_win_is_submenu;
   switch (main_menu_event) {
     case ev_file_submenu: {
-    	 return submenu_action(condition, file_submenu_info, file_submenu_data, main_win);
-       break;  
+       return submenu_action(condition, file_submenu_info, file_submenu_data, main_win);
+       break;
     }
     case ev_edit_submenu: {
-  	    return submenu_action(condition, edit_submenu_info, edit_submenu_data, main_win);
+       return submenu_action(condition, edit_submenu_info, edit_submenu_data, main_win);
        break;
     }
     case ev_misc_submenu: {
       return submenu_action(condition, misc_submenu_info, misc_submenu_data, main_win);
-      break;  
-    } 
+      break;
+    }
   } /* switch (main_menu_state) */
-  condition->second_win_state = second_win_is_other;	
+  condition->second_win_state = second_win_is_other;
   return ev_continue;
 }
-
 
 program_event main_menu(program_condition* condition,
                         WINDOW* main_win,
@@ -207,7 +209,7 @@ program_event main_menu(program_condition* condition,
   chtype sym;
   int pos = 0;
   program_event tmp_event = ev_continue;
-  
+
   show_main_menu(main_menu_max, main_menu, pos);
   touchwin(main_win);
   wrefresh(stdscr);
@@ -217,7 +219,7 @@ program_event main_menu(program_condition* condition,
     switch (sym)
     {
        case KEY_RESIZE: {
-       	condition->main_menu_pos = pos;
+         condition->main_menu_pos = pos;
          editor_redraw(condition, main_win, NULL);
          break;
        }
@@ -227,7 +229,7 @@ program_event main_menu(program_condition* condition,
            show_main_menu(main_menu_max, main_menu, pos);
            touchwin(main_win);
            wrefresh(stdscr);
-         }  
+         }
          break;
        }
        case KEY_RIGHT: { /* >>> */
@@ -236,12 +238,12 @@ program_event main_menu(program_condition* condition,
            show_main_menu(main_menu_max, main_menu, pos);
            touchwin(main_win);
            wrefresh(stdscr);
-         }  
+         }
          break;
        }
        case local_esc_key: {
          tmp_event = ev_exit_from_menu;
-         break;       
+         break;
        }
        case KEY_DOWN: {
          condition->main_menu_pos = pos;

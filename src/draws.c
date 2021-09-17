@@ -39,18 +39,16 @@ void calculate_obj_coords(program_condition* condition, WINDOW* second_win)
     getmaxyx(second_win,
              tmp_size_second_win.row,
              tmp_size_second_win.col);
-  	 if (condition->second_win_state != second_win_is_submenu) {
-      condition->begin_second_win.row =
-          tmp_stdscr_size.row - ( tmp_size_second_win.row / 2 );
-      condition->begin_second_win.col =
-          tmp_stdscr_size.col - ( tmp_size_second_win.col / 2 );     
+      if (condition->second_win_state != second_win_is_submenu) {
+        condition->begin_second_win.row = tmp_stdscr_size.row - ( tmp_size_second_win.row / 2 );
+        condition->begin_second_win.col = tmp_stdscr_size.col - ( tmp_size_second_win.col / 2 );
     } else {
       getbegyx(second_win,
-	            condition->begin_second_win.row,
+               condition->begin_second_win.row,
                condition->begin_second_win.col);
     }
   } else {
-    condition->begin_second_win = zero_point;  
+    condition->begin_second_win = zero_point;
   }
 }
 
@@ -79,19 +77,18 @@ void editor_redraw(program_condition* condition, WINDOW* main_win, WINDOW* secon
   erase();
   calculate_obj_coords(condition, second_win);
   draw_stdscr_statics(condition);
-  show_main_menu(editor_main_menu_max, editor_main_menu_data, condition->main_menu_pos);  
+  show_main_menu(editor_main_menu_max, editor_main_menu_data, condition->main_menu_pos);
   mvwin(main_win,
         condition->begin_main_win.row, condition->begin_main_win.col);
-  if (second_win) { 
+  if (second_win) {
     touchwin(second_win);
     if (condition->second_win_state != second_win_is_submenu) {
       mvwin(second_win,
             condition->begin_second_win.row, condition->begin_second_win.col);
-    }       
+    }
   }
   wrefresh(stdscr);
   wrefresh(main_win);
   if (second_win)
     wrefresh(second_win);
 }
-
